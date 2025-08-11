@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SQL Agent UI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1 class="glitch" id="mainHead">RowBot</h1>
+      <p>Upload a file and ask me anything about your data</p>
+    </header>
+
+    <section class="upload-section">
+      <input type="file" id="fileInput" />
+      <!-- <input type="text" id="tableNameInput" placeholder="Table name (optional)" /> -->
+      <button id="uploadBtn" class="btn">Upload File</button>
+    </section>
+    <div id="uploadStatus"></div>                    
+
+    <section class="chat-section">
+      <input type="text" id="chatInput" placeholder="Type your query prompt..." />
+      <button id="sendBtn" class="btn">Send</button>
+    </section>
+
+    <section class="result-section">
+      <pre id="sqlQuery"></pre>
+      <div id="queryResult"></div>
+    </section>
+    <div id="note" class="glitch"><p>Note:</p> Currently, only the analysis feature is available. Database manipulation functionality will be introduced in future updates.</div>
+  </div>
+
+  <!-- <script src="script.js"></script> -->
+  <script type="module" src="script.js"></script>
+
+</body>
+</html>

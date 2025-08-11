@@ -1,0 +1,235 @@
+/* custom fonts */
+@font-face {
+  font-family: 'HeadingFont';
+  src: url('fonts/Devotion_Ligatures_Demo.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ===== Base Styling ===== */
+body {
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  /* background: linear-gradient(135deg, #f8faff, #eaf3ff); */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color:#6c757d;
+  background-image: url(images/1.jpg);
+  /* background-size:contain; */
+   background-size: cover;
+  background-repeat: no-repeat;   /* no repeating */
+  background-position: center;    /* center the image */
+  background-attachment: fixed;   /* makes it fixed on scroll */
+}
+
+.app-container {
+    background: white;
+    width: 90%;
+    max-width: 900px;
+    margin-top: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    padding: 20px 30px;
+    animation: fadeSlide 0.7s ease-in-out;
+    background-color: #343a40;
+    clip-path: polygon(
+      0 0,             
+    calc(100% - 150px) 0,  
+    100% 150px,       
+    100% 100%,      
+    0 100%          
+    );
+    overflow: visible;
+    border: 1px solid #70e000;
+}
+
+
+/* ===== Header ===== */
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#mainHead {
+  margin-bottom: 50px;
+  /* font-family: 'HeadingFont'; */
+  font-size: 5rem;
+  font-weight: 700;
+  transform: skewX(-15deg);
+  /* color: #70e000; */
+  /* margin:200px; */
+  /* letter-spacing: 1px; */
+}
+
+header p {
+  color: #70e000;
+}
+
+/* ===== Upload & Chat Section ===== */
+.upload-section, .chat-section {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+#fileInput{
+    color: white;
+}
+
+input[type="file"], input[type="text"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  font-size: 14px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  color: white;
+  background-color: #3c3c3c;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  /* transition: background 0.3s ease; */
+  transition: transform 0.3s ease; /* smooth scaling */
+}
+
+button:hover {
+  background-color: #000000;
+  color: #70e000;
+  border: 1px solid #70e000;
+  transform: scale(1.05); /* 20% bigger */
+}
+
+#uploadStatus {
+  color: #70e000;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+#chatInput{
+  width: 50rem;
+  color: #70e000;
+  background-color: #000000;
+  /* border: 1px solid white; */
+  border: none;
+}
+
+#chatInput:focus{
+  border: none;
+  
+}
+
+#chatInput::placeholder {
+  color: #70e000; /* placeholder text color */
+  opacity: 1;  /* make sure placeholder is fully visible */
+}
+
+/* ===== Query Result ===== */
+.result-section {
+  background: #495057;
+  padding: 15px;
+  border-radius: 15px;
+  overflow-x: auto;
+}
+
+#sqlQuery {
+  background: black;
+  color: #70e000;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  margin-bottom: 15px;
+}
+
+/* ===== Table Styling ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  opacity: 0;
+  animation: fadeIn 0.6s ease-in-out forwards;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  border: none;
+  padding: 10px 12px;
+  text-align: center;
+  color: white;
+  background-color: #2d2d2d;
+}
+
+th {
+  background: #000000;
+  color: #70e000;
+}
+
+tr:nth-child(even) {
+  background: #c1c1c1;
+  color: #70e000;
+}
+
+tr:nth-child(odd) {
+  background: #cbcbca;
+  color: #70e000;
+}
+
+tr:hover {
+  background: #6b6b6b;
+  transition: background 0.3s ease;
+}
+
+#note{
+  margin: 40px;
+  color: white;
+}
+
+#note p{
+  color: red;
+}
+
+td:hover{
+  color: #70e000;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.glitch{ 
+  /* all: unset; */
+  /* background-color: #040a1a; */
+  /* background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='20' height='40' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(224, 73%, 6%, 1)'/><path d='M0 30h20L10 50zm-10-20h20L0 30zm20 0h20L20 30zM0-10h20L10 10z'  stroke-width='2' stroke='hsla(224, 59%, 18%, 0.6)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>"); */
+  /* border: 6px solid #252e45; */
+  /* border-radius: 10px; */
+  color: #fff;
+  /* cursor: pointer; */
+  font-family: "Arial", sans-serif;
+   /* font-size: 3rem; */
+   padding: 1rem 2rem; 
+  /* text-transform: uppercase;  */
+
+  &:focus {
+    outline: revert;
+  }
+}
