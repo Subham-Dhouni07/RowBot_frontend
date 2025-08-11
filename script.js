@@ -5,7 +5,7 @@ const queryResultDiv = document.getElementById('queryResult');
 let ws;
 
 function connectWebSocket() {
-  ws = new WebSocket('ws://localhost:8000/ws');
+  ws = new WebSocket('wss://rowbot-backend.onrender.com/ws');
   ws.onopen = () => console.log('WebSocket connected');
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -43,7 +43,7 @@ function uploadFile() {
   formData.append('file', fileInput.files[0]);
   formData.append('table_name', tableName);
 
-  fetch('http://localhost:8000/upload/', {
+  fetch('https://rowbot-backend.onrender.com/upload/', {
     method: 'POST',
     body: formData
   })
