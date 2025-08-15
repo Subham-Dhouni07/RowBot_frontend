@@ -5,14 +5,21 @@ const queryResultDiv = document.getElementById('queryResult');
 let ws;
 
 function connectWebSocket() {
-  ws = new WebSocket('wss://rowbot-backend.onrender.com/ws');
+  const wsUrl = window.location.hostname === "localhost"
+    ? "ws://localhost:8000/ws"
+    : "wss://rowbot-backend.onrender.com/ws";
+
+  ws = new WebSocket(wsUrl);
+
   ws.onopen = () => console.log('WebSocket connected');
+
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data.error) {
       alert("Error: " + data.error);
       return;
     }
+
     if (data.sql_query) {
       sqlQueryElem.textContent = "Generated SQL:\n" + data.sql_query;
     }
@@ -20,6 +27,7 @@ function connectWebSocket() {
       renderTable(data.data.result);
     }
   };
+
   ws.onclose = () => {
     console.log('WebSocket closed, reconnecting in 3s...');
     setTimeout(connectWebSocket, 3000);
@@ -28,20 +36,18 @@ function connectWebSocket() {
 
 function uploadFile() {
   const fileInput = document.getElementById('fileInput');
-  const tableName = 'Table';
   if (!fileInput.files.length) {
-  uploadStatus.textContent = 'Please choose the file first!';
-  uploadStatus.style.color = 'red';
-  setTimeout(() => {
-    uploadStatus.textContent = '';
-    uploadStatus.style.color = '';
-  }, 3000);
-  return;
-}
+    uploadStatus.textContent = 'Please choose the file first!';
+    uploadStatus.style.color = 'red';
+    setTimeout(() => {
+      uploadStatus.textContent = '';
+      uploadStatus.style.color = '';
+    }, 3000);
+    return;
+  }
 
   const formData = new FormData();
   formData.append('file', fileInput.files[0]);
-  formData.append('table_name', tableName);
 
   fetch('https://rowbot-backend.onrender.com/upload/', {
     method: 'POST',
@@ -51,17 +57,21 @@ function uploadFile() {
   .then((data) => {
     if (data.message) {
       uploadStatus.textContent = data.message;
-      // Auto fetch table after upload
-      sendQuery(`SELECT * FROM ${tableName}`);
+
+      // Extract table name if possible
+      let match = data.message.match(/'(.+)'/);
+      let tableName = match ? match[1] : "Table1";
+
+      // Chain query in natural language so backend converts it
+      sendQuery(`Show all rows from ${tableName}`);
     } else if (data.error) {
       uploadStatus.textContent = 'Upload error: ' + data.error;
     }
   })
-
-    // uploadStatus.textContent = 'File Uploaded Successfully'
-  uploadStatus.textContent = 'File Uploaded Successfully';
-  setTimeout(() => uploadStatus.textContent = '', 3000);
-
+  .catch(err => {
+    console.error(err);
+    uploadStatus.textContent = 'Error uploading file';
+  });
 }
 
 function sendQuery(sqlPrompt) {
@@ -69,6 +79,7 @@ function sendQuery(sqlPrompt) {
     alert('WebSocket not connected');
     return;
   }
+
   ws.send(JSON.stringify({
     command: 'chat_to_sql',
     message: sqlPrompt
@@ -79,6 +90,7 @@ function sendChat() {
   const chatInput = document.getElementById('chatInput');
   const message = chatInput.value.trim();
   if (!message) return;
+
   sendQuery(message);
   chatInput.value = '';
   sqlQueryElem.textContent = 'Waiting for response...';
@@ -113,7 +125,7 @@ function renderTable(rows) {
   queryResultDiv.innerHTML = '';
   queryResultDiv.appendChild(table);
 
-  // Fade in animation using Anime.js
+  // Fade-in animation using Anime.js
   anime({
     targets: 'table',
     opacity: [0, 1],
@@ -129,45 +141,24 @@ window.onload = () => {
   document.getElementById('sendBtn').addEventListener('click', sendChat);
 };
 
-const uploadBtn = document.getElementById('uploadBtn');
-// const uploadStatus = document.getElementById('uploadStatus');
-
-uploadBtn.addEventListener('click', () => {
-  // Clear any old timers so they don't overlap
-
-  // Show the message
-  uploadStatus.textContent = "Successfully Uploaded!!";
-
-  // Remove it after 3 seconds
-  setTimeout(() => {
-    uploadStatus.textContent = "";
-  }, 3000);
-});
-
-
-
-// Glitch logic
-
+// Glitch effect
 import { VFX } from "https://esm.sh/@vfx-js/core";
 
 class ButtonEffect {
   constructor(button) {
     this.vfx = new VFX();
-    button.addEventListener("mouseenter", (e) => {
+    button.addEventListener("mouseenter", () => {
       this.vfx.add(button, { shader: "glitch", overflow: 100 });
     });
-    console.log("glitch")
-    button.addEventListener("mouseleave", (e) => {
+    button.addEventListener("mouseleave", () => {
       this.vfx.remove(button);
     });
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const glitchElements = document.querySelectorAll(".glitch"); // select all with class "glitch"
+  const glitchElements = document.querySelectorAll(".glitch");
   glitchElements.forEach(el => {
     new ButtonEffect(el);
   });
 });
-
-
