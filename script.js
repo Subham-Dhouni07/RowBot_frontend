@@ -70,7 +70,7 @@ function uploadFile() {
   })
   .catch(err => {
     console.error(err);
-    uploadStatus.textContent = 'Error uploading file';
+    uploadStatus.textContent = err;
   });
 }
 
@@ -162,3 +162,4 @@ document.addEventListener("DOMContentLoaded", () => {
     new ButtonEffect(el);
   });
 });
+
