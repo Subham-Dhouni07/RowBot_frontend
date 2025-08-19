@@ -70,6 +70,7 @@ function uploadFile() {
   })
   .catch(err => {
     console.error(err);
+    console.log("checking uploading")
     uploadStatus.textContent = 'ha';
   });
 }
@@ -162,5 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     new ButtonEffect(el);
   });
 });
+
 
 
