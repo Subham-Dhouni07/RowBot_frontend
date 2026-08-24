@@ -2,38 +2,245 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SQL Agent UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RowBot — upload your data, ask questions in plain English, get SQL and answers back." />
+  <!-- Limits where anything on this page can send data to. If a script ever got
+       injected, connect-src is what stops it shipping the API key elsewhere. -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://esm.sh;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob:;
+    font-src 'self';
+    connect-src 'self' https://esm.sh https://rowbot-backend.onrender.com wss://rowbot-backend.onrender.com http://localhost:8000 ws://localhost:8000;
+    form-action 'none';
+    base-uri 'none';
+    object-src 'none';
+  " />
+  <meta name="referrer" content="no-referrer" />
+  <title>RowBot — Ask your data anything</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-container">
-    <header>
-      <h1 class="glitch" id="mainHead">RowBot</h1>
-      <p>Upload a file and ask me anything about your data</p>
-    </header>
-
-    <section class="upload-section">
-      <input type="file" id="fileInput" />
-      <!-- <input type="text" id="tableNameInput" placeholder="Table name (optional)" /> -->
-      <button id="uploadBtn" class="btn">Upload File</button>
-    </section>
-    <div id="uploadStatus"></div>                    
-
-    <section class="chat-section">
-      <input type="text" id="chatInput" placeholder="Type your query prompt..." />
-      <button id="sendBtn" class="btn">Send</button>
-    </section>
-
-    <section class="result-section">
-      <pre id="sqlQuery"></pre>
-      <div id="queryResult"></div>
-    </section>
-    <div id="note" class="glitch"><p>Note:</p> Currently, only the analysis feature is available. Database manipulation functionality will be introduced in future updates.</div>
+  <!-- ===== Ambient background ===== -->
+  <div class="bg" aria-hidden="true">
+    <canvas id="particles" class="bg__canvas"></canvas>
+    <div class="bg__grid"></div>
+    <div class="bg__scrim"></div>
   </div>
 
-  <!-- <script src="script.js"></script> -->
-  <script type="module" src="script.js"></script>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+   <div class="topbar__left">
+    <a class="brand" href="#top" id="brandLink">
+      <span class="brand__mark" aria-hidden="true">
+        <!-- Each feature is its own element so the wink can target them
+             individually — they used to share one path. -->
+        <svg class="bot" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <g class="bot__head">
+            <rect class="bot__body" x="3" y="7" width="18" height="13" rx="3" />
+            <path class="bot__antenna" d="M12 7V3" />
+            <circle class="bot__bulb" cx="12" cy="2.5" r="1.2" fill="currentColor" stroke="none" />
+            <path class="bot__eye bot__eye--l" d="M8.5 13h.01" />
+            <path class="bot__eye bot__eye--r" d="M15.5 13h.01" />
+            <!-- closed happy eye, revealed on hover -->
+            <path class="bot__wink" d="M14.6 12.9c.35.5.9.5 1.25 0" />
+            <path class="bot__mouth" d="M9 16.8c1.8.9 4.2.9 6 0" />
+          </g>
+        </svg>
+      </span>
+      <span class="brand__text">RowBot</span>
+    </a>
 
+    <!-- Deliberately unlabelled. It starts pulsing only when the connection
+         stalls, so it advertises itself exactly when it's useful. -->
+    <button class="mystery" id="mysteryBox" type="button" aria-label="Something to do while you wait">
+      <span class="mystery__glyph" aria-hidden="true">?</span>
+    </button>
+   </div>
+
+    <div class="conn">
+      <div class="status" id="connStatus" data-state="connecting">
+        <span class="status__dot" aria-hidden="true"></span>
+        <span class="status__label" id="connLabel">Connecting</span>
+      </div>
+
+      <!-- Explains a slow or failed connection. Anchored to the pill above it. -->
+      <div class="conn-pop" id="connPop" role="status" aria-live="polite" hidden>
+        <button class="conn-pop__close" id="connPopClose" type="button" aria-label="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <p class="conn-pop__title" id="connPopTitle"></p>
+        <p class="conn-pop__body" id="connPopBody"></p>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell" id="top">
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <p class="hero__eyebrow" data-reveal>
+        <span class="hero__pill">SQL agent</span>
+        Natural language in, answers out
+      </p>
+      <h1 class="hero__title" id="heroTitle">RowBot</h1>
+      <p class="hero__sub" data-reveal>
+        Drop in a spreadsheet, ask a question the way you'd ask a colleague,
+        and watch the query write itself.
+      </p>
+    </section>
+
+    <!-- ===== Workflow ===== -->
+    <div class="steps">
+
+      <!-- Step 1 — API key -->
+      <section class="card" data-card>
+        <div class="card__head">
+          <span class="card__num">01</span>
+          <div>
+            <h2 class="card__title">Connect your model</h2>
+            <p class="card__hint">RowBot runs on your own Gemini key.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="apiKeyInput" class="sr-only">Gemini API key</label>
+          <div class="input-wrap">
+            <span class="input-wrap__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="8" cy="12" r="4" /><path d="M12 12h9M17 12v3M20.5 12v2" />
+              </svg>
+            </span>
+            <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key"
+                   autocomplete="off" spellcheck="false" />
+            <button id="toggleKeyBtn" class="ghost-btn" type="button" aria-label="Show API key">Show</button>
+          </div>
+          <p class="note">
+            <span class="note__icon" aria-hidden="true">🔒</span>
+            Don't worry — we don't want your API key. We can barely handle our own.
+          </p>
+        </div>
+      </section>
+
+      <!-- Step 2 — Upload -->
+      <section class="card" data-card>
+        <div class="card__head">
+          <span class="card__num">02</span>
+          <div>
+            <h2 class="card__title">Bring your data</h2>
+            <p class="card__hint">CSV or Excel. It becomes a queryable table.</p>
+          </div>
+        </div>
+
+        <div class="dropzone" id="dropzone" tabindex="0" role="button"
+             aria-label="Choose a file or drag one here">
+          <input type="file" id="fileInput" class="sr-only" accept=".csv,.xls,.xlsx,.json" />
+          <div class="dropzone__inner">
+            <span class="dropzone__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 16V4" /><path d="m7 9 5-5 5 5" />
+                <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+              </svg>
+            </span>
+            <p class="dropzone__text"><strong>Drop a file</strong> or click to browse</p>
+            <p class="dropzone__meta" id="fileMeta">No file selected</p>
+          </div>
+        </div>
+
+        <div class="card__actions">
+          <button id="uploadBtn" class="btn btn--primary" type="button">
+            <span class="btn__label">Upload file</span>
+          </button>
+        </div>
+
+        <div id="uploadStatus" class="status-line" role="status" aria-live="polite"></div>
+      </section>
+
+      <!-- Step 3 — Ask -->
+      <section class="card" data-card>
+        <div class="card__head">
+          <span class="card__num">03</span>
+          <div>
+            <h2 class="card__title">Ask anything</h2>
+            <p class="card__hint">Plain English. RowBot handles the SQL.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="chatInput" class="sr-only">Your question</label>
+          <div class="input-wrap input-wrap--chat">
+            <span class="input-wrap__prompt" aria-hidden="true">&gt;</span>
+            <input type="text" id="chatInput" placeholder="Which region had the highest revenue last quarter?"
+                   autocomplete="off" />
+            <button id="sendBtn" class="btn btn--primary btn--send" type="button">
+              <span class="btn__label">Run</span>
+              <svg class="btn__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h13" /><path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <div class="chips" id="chips">
+            <span class="chips__label">Try:</span>
+            <button class="chip" type="button">Show me the first 20 rows</button>
+            <button class="chip" type="button">What columns are in this table?</button>
+            <button class="chip" type="button">Top 5 by total, highest first</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== Results ===== -->
+    <section class="results" id="results" data-card>
+      <div class="results__head">
+        <h2 class="results__title">Result</h2>
+        <div class="results__meta" id="resultMeta"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty" id="emptyState">
+        <div class="empty__art" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <p class="empty__text">Your query and its results will appear here.</p>
+      </div>
+
+      <!-- Thinking state -->
+      <div class="thinking" id="thinking" hidden>
+        <div class="thinking__bars" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p class="thinking__text" id="thinkingText">Thinking through your question…</p>
+      </div>
+
+      <!-- SQL -->
+      <figure class="sql" id="sqlBlock" hidden>
+        <figcaption class="sql__bar">
+          <span class="sql__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="sql__name">generated.sql</span>
+          <button class="ghost-btn" id="copySqlBtn" type="button">Copy</button>
+        </figcaption>
+        <pre id="sqlQuery"></pre>
+      </figure>
+
+      <!-- Table -->
+      <div id="queryResult" class="table-wrap"></div>
+    </section>
+
+    <p class="footnote">
+      <strong>Note:</strong> Currently, only the analysis feature is available.
+      Database manipulation functionality will be introduced in future updates.
+    </p>
+  </main>
+
+  <!-- Toasts -->
+  <div class="toasts" id="toasts" role="region" aria-live="assertive" aria-label="Notifications"></div>
+
+  <script type="module" src="script.js"></script>
 </body>
 </html>
