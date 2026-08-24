@@ -1,235 +1,1105 @@
-/* custom fonts */
-@font-face {
-  font-family: 'HeadingFont';
-  src: url('fonts/Devotion_Ligatures_Demo.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+/* ============================================================
+   RowBot — design tokens
+   ============================================================ */
+:root {
+  /* surfaces: near-black base, each step slightly lifted */
+  --bg:          #07090a;
+  --surface-1:   #0e1113;
+  --surface-2:   #14181a;
+  --surface-3:   #1c2124;
+  --line:        #262c30;
+  --line-soft:   #1b2023;
+
+  /* brand — the original neon green, tuned for contrast */
+  --accent:      #70e000;
+  --accent-soft: #9bff3d;
+  --accent-dim:  rgba(112, 224, 0, 0.14);
+  --accent-line: rgba(112, 224, 0, 0.32);
+
+  /* text */
+  --text:        #e8eef0;
+  --text-muted:  #97a3a8;
+  --text-faint:  #616d72;
+
+  --danger:      #ff5c5c;
+  --warn:        #ffb020;
+
+  /* type */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+
+  /* shape */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-2: 0 18px 40px -18px rgba(0,0,0,.85);
+  --shadow-glow: 0 0 0 1px var(--accent-line), 0 0 32px -8px rgba(112,224,0,.35);
+
+  --ease: cubic-bezier(.22,1,.36,1);
 }
 
-/* ===== Base Styling ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Must outrank the class rules below. Several panels set `display: grid`,
+   which beats the UA stylesheet's [hidden]{display:none} and leaves them
+   on screen even with the attribute set. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
 body {
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
-  /* background: linear-gradient(135deg, #f8faff, #eaf3ff); */
   margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
   min-height: 100vh;
-  background-color:#6c757d;
-  background-image: url(images/1.jpg);
-  /* background-size:contain; */
-   background-size: cover;
-  background-repeat: no-repeat;   /* no repeating */
-  background-position: center;    /* center the image */
-  background-attachment: fixed;   /* makes it fixed on scroll */
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-.app-container {
-    background: white;
-    width: 90%;
-    max-width: 900px;
-    margin-top: 40px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    padding: 20px 30px;
-    animation: fadeSlide 0.7s ease-in-out;
-    background-color: #343a40;
-    clip-path: polygon(
-      0 0,             
-    calc(100% - 150px) 0,  
-    100% 150px,       
-    100% 100%,      
-    0 100%          
-    );
-    overflow: visible;
-    border: 1px solid #70e000;
+h1, h2, h3, p, figure { margin: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
-
-/* ===== Header ===== */
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-#mainHead {
-  margin-bottom: 50px;
-  /* font-family: 'HeadingFont'; */
-  font-size: 5rem;
-  font-weight: 700;
-  transform: skewX(-15deg);
-  /* color: #70e000; */
-  /* margin:200px; */
-  /* letter-spacing: 1px; */
-}
-
-header p {
-  color: #70e000;
-}
-
-/* ===== Upload & Chat Section ===== */
-.upload-section, .chat-section {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  justify-content: center;
-}
-
-#fileInput{
-    color: white;
-}
-
-input[type="file"], input[type="text"] {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ced4da;
-  font-size: 14px;
-}
-
-.btn {
-  padding: 10px 15px;
-  border: none;
-  color: white;
-  background-color: #3c3c3c;
-  font-size: 18px;
-  border-radius: 10px;
-  cursor: pointer;
-  /* transition: background 0.3s ease; */
-  transition: transform 0.3s ease; /* smooth scaling */
-}
-
-button:hover {
-  background-color: #000000;
-  color: #70e000;
-  border: 1px solid #70e000;
-  transform: scale(1.05); /* 20% bigger */
-}
-
-#uploadStatus {
-  color: #70e000;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-}
-
-#chatInput{
-  width: 50rem;
-  color: #70e000;
-  background-color: #000000;
-  /* border: 1px solid white; */
-  border: none;
-}
-
-#chatInput:focus{
-  border: none;
-  
-}
-
-#chatInput::placeholder {
-  color: #70e000; /* placeholder text color */
-  opacity: 1;  /* make sure placeholder is fully visible */
-}
-
-/* ===== Query Result ===== */
-.result-section {
-  background: #495057;
-  padding: 15px;
-  border-radius: 15px;
-  overflow-x: auto;
-}
-
-#sqlQuery {
-  background: black;
-  color: #70e000;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 14px;
-  white-space: pre-wrap;
-  margin-bottom: 15px;
-}
-
-/* ===== Table Styling ===== */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  opacity: 0;
-  animation: fadeIn 0.6s ease-in-out forwards;
-  border-radius: 12px;
+/* ============================================================
+   Ambient background
+   ============================================================ */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   overflow: hidden;
 }
 
-th, td {
-  border: none;
-  padding: 10px 12px;
+.bg__grid {
+  position: absolute;
+  inset: -50%;
+  background-image:
+    linear-gradient(to right,  var(--line-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line-soft) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: .22;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 40%, transparent 100%);
+}
+
+/* Particle field. pointer-events:none is what keeps the UI on top clickable —
+   particles.js listens on window instead of on this element. */
+.bg__canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Darkens the field under the content so text keeps its contrast.
+   Without this the hero sits directly on moving particles and gets noisy. */
+.bg__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 32%, rgba(7,9,10,.86), transparent 78%),
+    linear-gradient(to bottom, rgba(7,9,10,.55) 0%, rgba(7,9,10,.2) 30%, rgba(7,9,10,.72) 100%);
+}
+
+/* ============================================================
+   Top bar
+   ============================================================ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px clamp(16px, 4vw, 40px);
+  background: rgba(7,9,10,.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-line);
+}
+.brand__mark svg { width: 20px; height: 20px; overflow: visible; }
+
+/* While the robot is out of the box, the empty box reads as empty.
+   Styled rather than transformed — the svg is a child, so scaling the box
+   would multiply into the robot mid-leap. */
+.brand__mark.is-vacated {
+  background: rgba(255,255,255,.03);
+  border-color: var(--line);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.5);
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+}
+.brand:hover .brand__mark {
+  background: rgba(112,224,0,.22);
+  border-color: var(--accent);
+}
+
+/* Without transform-box:fill-box an SVG child rotates/scales around the
+   viewBox origin (0,0), not its own centre — the wink needs per-part pivots. */
+.bot__head,
+.bot__eye,
+.bot__wink,
+.bot__bulb,
+.bot__antenna,
+.bot__mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* Mouth grows downward from its top edge, so scaleY deepens the smile
+   instead of inflating it in both directions. */
+.bot__mouth { transform-origin: 50% 0%; }
+.bot__wink  { opacity: 0; }
+.brand__text {
+  font-weight: 650;
+  letter-spacing: -.01em;
+  font-size: 16px;
+}
+
+
+/* Anchor for the explainer popover below the pill. */
+.conn { position: relative; }
+
+.conn-pop {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  z-index: 40;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px 38px 15px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--accent-line);
+  background: rgba(20, 24, 26, .97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-2);
+  text-align: left;
+  will-change: transform, opacity;
+}
+
+/* caret pointing up at the pill */
+.conn-pop::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 26px;
+  width: 10px; height: 10px;
+  background: inherit;
+  border-left: 1px solid var(--accent-line);
+  border-top: 1px solid var(--accent-line);
+  transform: rotate(45deg);
+}
+
+.conn-pop[data-tone="error"] { border-color: rgba(255,92,92,.45); }
+.conn-pop[data-tone="error"]::before { border-color: rgba(255,92,92,.45); }
+
+.conn-pop__title {
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--accent);
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+.conn-pop[data-tone="error"] .conn-pop__title { color: var(--danger); }
+
+.conn-pop__body {
+  font-size: 12.8px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.conn-pop__close {
+  position: absolute;
+  top: 8px; right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px; height: 24px;
+  padding: 0;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+.conn-pop__close svg { width: 13px; height: 13px; }
+.conn-pop__close:hover {
+  color: var(--text);
+  background: var(--surface-3);
+  border-color: var(--line);
+}
+.conn-pop__close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Brand + mystery box are one left-hand group, so the box is pinned to the
+   brand and can't drift when the status pill's text changes width. */
+.topbar__left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* ============================================================
+   Mystery box
+   ============================================================ */
+.mystery {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  margin-left: 14px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  /* Invisible at rest — no outline, no fill. The glyph glitching through is
+     the only thing that gives the box away. Border kept as transparent so
+     hovering doesn't shift the layout by 2px. */
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color .25s var(--ease), background .25s var(--ease);
+}
+.mystery__glyph {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: transparent;             /* black box at rest; JS flashes glyphs in */
+  transition: color .25s var(--ease);
+  will-change: transform;
+}
+
+/* The flash. transition:none so it snaps on and off — a fade would turn a
+   2-frame glitch into a soft pulse and kill the "did I see that?" effect. */
+.mystery__glyph.is-glitch {
+  color: var(--accent);
+  transition: none;
+  /* chromatic split, like a bad signal */
+  text-shadow: -1.5px 0 rgba(255, 45, 149, .85), 1.5px 0 rgba(0, 229, 255, .85);
+}
+
+.mystery:hover {
+  border-color: var(--accent-line);
+  background: #04120a;
+}
+.mystery:hover .mystery__glyph {
+  color: var(--accent);
+  text-shadow: none;
+}
+.mystery:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Only draws attention once the wait is real. */
+/* While the server stalls the box still stays invisible — a pulsing outline
+   would defeat the point. It just glitches more often instead. */
+
+/* No physical keyboard, no game. */
+@media (max-width: 719px) {
+  .mystery { display: none; }
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: help;             /* signals the title tooltip explains it */
+  /* Fixed width: the label swaps between "Connected" and "Reconnecting…",
+     and without this the pill resizes and shoves the layout around. */
+  min-width: 158px;
+  justify-content: center;
+}
+.status__dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  box-shadow: 0 0 0 0 currentColor;
+}
+.status[data-state="online"]      { color: var(--accent);  border-color: var(--accent-line); }
+.status[data-state="online"] .status__dot     { background: var(--accent); }
+.status[data-state="connecting"]  { color: var(--warn); }
+.status[data-state="connecting"] .status__dot { background: var(--warn); }
+.status[data-state="offline"]     { color: var(--danger); }
+.status[data-state="offline"] .status__dot    { background: var(--danger); }
+
+/* ============================================================
+   Shell
+   ============================================================ */
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 32px, 1060px);
+  margin: 0 auto;
+  padding: clamp(40px, 8vh, 88px) 0 80px;
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero {
   text-align: center;
-  color: white;
-  background-color: #2d2d2d;
+  margin-bottom: clamp(40px, 7vh, 72px);
 }
 
-th {
-  background: #000000;
-  color: #70e000;
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+}
+.hero__pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-line);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
 
-tr:nth-child(even) {
-  background: #c1c1c1;
-  color: #70e000;
+.hero__title {
+  font-size: clamp(3.4rem, 13vw, 8rem);
+  line-height: .92;
+  font-weight: 700;
+  letter-spacing: -.045em;
+  margin-bottom: 20px;
+  /* Solid fallback: this is what shows if the JS module never loads
+     and the title is therefore never split into spans. */
+  color: #eaf5e2;
 }
 
-tr:nth-child(odd) {
-  background: #cbcbca;
-  color: #70e000;
+/* anime.js splitText wraps each character in a span; the manual fallback
+   in script.js uses .char. Cover both so either path animates cleanly.
+   The gradient lives per-character on purpose — background-clip:text on the
+   parent smears once its children are individually transformed. */
+.hero__title span,
+.hero__title .char {
+  display: inline-block;
+  will-change: transform, opacity;
+  background: linear-gradient(178deg, #ffffff 18%, #b9d69c 58%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-tr:hover {
-  background: #6b6b6b;
-  transition: background 0.3s ease;
+/* Full spectrum during the robot's flyby. Applied per character (the clip has
+   to be per-character here — see above), with JS offsetting each letter's
+   gradient position so the spectrum spreads across the word and flows. */
+.hero__title.is-party span,
+.hero__title.is-party .char {
+  background-image: linear-gradient(
+    90deg,
+    #ff2d95, #ff8a00, #ffd400, #70e000,
+    #00ff9d, #00e5ff, #b16cff, #ff2d95
+  );
+  background-size: 300% 100%;
 }
 
-#note{
-  margin: 40px;
-  color: white;
+.hero__sub {
+  max-width: 48ch;
+  margin: 0 auto;
+  color: var(--text-muted);
+  font-size: clamp(15px, 1.6vw, 17px);
 }
 
-#note p{
-  color: red;
+/* ============================================================
+   Cards
+   ============================================================ */
+.steps {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 22px;
 }
 
-td:hover{
-  color: #70e000;
+.card {
+  position: relative;
+  background: linear-gradient(180deg, var(--surface-1), var(--surface-1) 60%, #0c0f11);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: clamp(20px, 3vw, 30px);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
 }
 
-/* ===== Animations ===== */
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+/* hairline highlight along the top edge */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-line), transparent);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+.card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.card__num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+.card__title {
+  font-size: 17px;
+  font-weight: 620;
+  letter-spacing: -.01em;
+}
+.card__hint {
+  font-size: 13.5px;
+  color: var(--text-faint);
+  margin-top: 2px;
 }
 
+.card__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
 
-.glitch{ 
-  /* all: unset; */
-  /* background-color: #040a1a; */
-  /* background-image: url("data:image/svg+xml,<svg id='patternId' width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'><defs><pattern id='a' patternUnits='userSpaceOnUse' width='20' height='40' patternTransform='scale(2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(224, 73%, 6%, 1)'/><path d='M0 30h20L10 50zm-10-20h20L0 30zm20 0h20L20 30zM0-10h20L10 10z'  stroke-width='2' stroke='hsla(224, 59%, 18%, 0.6)' fill='none'/></pattern></defs><rect width='800%' height='800%' transform='translate(0,0)' fill='url(%23a)'/></svg>"); */
-  /* border: 6px solid #252e45; */
-  /* border-radius: 10px; */
-  color: #fff;
-  /* cursor: pointer; */
-  font-family: "Arial", sans-serif;
-   /* font-size: 3rem; */
-   padding: 1rem 2rem; 
-  /* text-transform: uppercase;  */
+/* ============================================================
+   Inputs
+   ============================================================ */
+.field { display: block; }
 
-  &:focus {
-    outline: revert;
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.input-wrap:focus-within {
+  border-color: var(--accent-line);
+  box-shadow: var(--shadow-glow);
+}
+.input-wrap__icon {
+  display: grid; place-items: center;
+  color: var(--text-faint);
+  flex: none;
+}
+.input-wrap__icon svg { width: 18px; height: 18px; }
+
+.input-wrap__prompt {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  flex: none;
+}
+
+.input-wrap input {
+  flex: 1 1 auto;
+  min-width: 0;              /* lets it shrink on mobile instead of overflowing */
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 12px 0;
+}
+.input-wrap input::placeholder { color: var(--text-faint); }
+
+#apiKeyInput { letter-spacing: .12em; }
+#apiKeyInput::placeholder { letter-spacing: normal; }
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-faint);
+  font-style: italic;
+}
+.note__icon { font-style: normal; }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--surface-3);
+  color: var(--text);
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+.btn__label, .btn__arrow { position: relative; z-index: 1; }
+.btn__arrow { width: 16px; height: 16px; }
+
+/* Sweep layer. Stays in CSS on purpose: pseudo-elements aren't reachable
+   from JS, so anime.js can't drive this one — it handles the lift instead. */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--accent), var(--accent-soft));
+  transform: translateX(-101%);
+  z-index: 0;
+  transition: transform .5s var(--ease);
+}
+.btn:hover::after { transform: translateX(0); }
+.btn:hover { color: #08120a; }
+.btn[disabled]::after { display: none; }
+
+.btn--primary {
+  background: var(--accent);
+  color: #08120a;
+  box-shadow: 0 6px 20px -8px rgba(112,224,0,.7);
+}
+.btn--primary::after {
+  background: linear-gradient(100deg, #ffffff, var(--accent-soft));
+}
+.btn--send { padding: 12px 18px; }
+
+.btn:focus-visible,
+.ghost-btn:focus-visible,
+.chip:focus-visible,
+.dropzone:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.ghost-btn {
+  flex: none;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.ghost-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-dim);
+}
+
+/* ============================================================
+   Dropzone
+   ============================================================ */
+.dropzone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: clamp(26px, 5vw, 44px) 20px;
+  border: 1.5px dashed var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .25s var(--ease), background .25s var(--ease);
+}
+.dropzone:hover { border-color: var(--accent-line); }
+.dropzone.is-dragging {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.dropzone.has-file { border-style: solid; border-color: var(--accent-line); }
+
+.dropzone__icon {
+  display: grid; place-items: center;
+  width: 46px; height: 46px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--accent);
+}
+.dropzone__icon svg { width: 22px; height: 22px; }
+
+.dropzone__text { font-size: 14.5px; color: var(--text-muted); }
+.dropzone__text strong { color: var(--text); font-weight: 600; }
+.dropzone__meta {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+.dropzone.has-file .dropzone__meta { color: var(--accent); }
+
+.status-line {
+  min-height: 20px;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  text-align: right;
+}
+.status-line[data-tone="error"] { color: var(--danger); }
+
+/* ============================================================
+   Suggestion chips
+   ============================================================ */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.chips__label {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.chip:hover {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-dim);
+}
+
+/* ============================================================
+   Results
+   ============================================================ */
+.results {
+  background: linear-gradient(180deg, var(--surface-1), #0c0f11);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: clamp(20px, 3vw, 30px);
+  box-shadow: var(--shadow-2);
+}
+
+.results__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.results__title {
+  font-size: 17px;
+  font-weight: 620;
+  letter-spacing: -.01em;
+}
+.results__meta {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+/* --- empty state --- */
+.empty {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: 46px 20px;
+  text-align: center;
+}
+.empty__art {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 42px;
+}
+.empty__art span {
+  width: 9px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+}
+.empty__art span:nth-child(1) { height: 40%; }
+.empty__art span:nth-child(2) { height: 70%; }
+.empty__art span:nth-child(3) { height: 100%; }
+.empty__art span:nth-child(4) { height: 55%; }
+.empty__text { color: var(--text-faint); font-size: 14px; }
+/* The cold-start explanation lives in the popover under the connection pill,
+   which only fires when there's an actual stall. A permanent notice here
+   claimed every first query was slow, even on a warm server. */
+
+/* --- thinking state --- */
+.thinking {
+  display: grid;
+  place-items: center;
+  gap: 16px;
+  padding: 46px 20px;
+  text-align: center;
+}
+.thinking__bars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+}
+.thinking__bars span {
+  width: 4px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: center;
+  will-change: transform;
+}
+.thinking__text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* --- sql block --- */
+.sql {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--bg);
+  margin-bottom: 18px;
+}
+.sql__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.sql__dots { display: inline-flex; gap: 6px; }
+.sql__dots i {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+}
+.sql__name {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+.sql pre {
+  margin: 0;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--accent);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+
+/* --- table --- */
+.table-wrap { overflow-x: auto; border-radius: var(--r-md); }
+.table-wrap:empty { display: none; }
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13.5px;
+  font-family: var(--font-mono);
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-3);
+  color: var(--accent);
+  font-weight: 600;
+  text-align: left;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+thead th:first-child { border-top-left-radius: var(--r-sm); }
+thead th:last-child  { border-top-right-radius: var(--r-sm); }
+
+tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+/* zebra applied to cells, not rows — a row background would sit behind
+   the cell background and never show */
+tbody tr:nth-child(even) td { background: rgba(255,255,255,.018); }
+tbody tr:hover td { background: var(--accent-dim); color: var(--text); }
+tbody tr:last-child td { border-bottom: none; }
+
+tbody tr { will-change: transform, opacity; }
+
+/* ============================================================
+   Footnote
+   ============================================================ */
+.footnote {
+  margin-top: 34px;
+  padding: 14px 18px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-soft);
+  background: var(--surface-1);
+  color: var(--text-faint);
+  font-size: 13px;
+  text-align: center;
+}
+.footnote strong { color: var(--warn); font-weight: 600; }
+
+/* ============================================================
+   Toasts
+   ============================================================ */
+.toasts {
+  position: fixed;
+  right: clamp(12px, 3vw, 24px);
+  bottom: clamp(12px, 3vw, 24px);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(340px, calc(100vw - 24px));
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: rgba(20,24,26,.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-2);
+  font-size: 13.5px;
+  color: var(--text);
+  will-change: transform, opacity;
+}
+.toast__icon { flex: none; font-size: 15px; line-height: 1.4; }
+.toast--error   { border-color: rgba(255,92,92,.4); }
+.toast--success { border-color: var(--accent-line); }
+.toast--info    { border-color: var(--line); }
+
+/* ============================================================
+   Rogue Rows (the wait game)
+   ============================================================ */
+.game {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  /* Transparent: the particle field keeps running underneath as the backdrop,
+     and the game's big explosions are fired into it. */
+  background: rgba(4, 6, 7, .55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.game__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.game__hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(16px, 4vw, 34px);
+  pointer-events: none;
+}
+.game__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  color: var(--text-faint);
+}
+.game__stat b {
+  color: var(--accent);
+  margin-left: 6px;
+  font-weight: 600;
+}
+.game__stat--best { color: var(--text-faint); opacity: .8; }
+
+.game__exit {
+  pointer-events: auto;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(20,24,26,.9);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+.game__exit:hover { color: var(--accent); border-color: var(--accent-line); }
+
+.game__banner {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-line);
+  background: rgba(10, 26, 6, .95);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  white-space: nowrap;
+  animation: bannerIn .4s var(--ease);
+}
+@keyframes bannerIn {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.game__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(4,6,7,.9), rgba(4,6,7,.55));
+}
+.game__title {
+  font-family: var(--font-mono);
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: .16em;
+  color: var(--accent);
+}
+.game__blurb {
+  max-width: 40ch;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.game__keys {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+.game__keys b,
+.game__cta b {
+  display: inline-block;
+  padding: 2px 7px;
+  margin: 0 1px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--accent);
+  font-weight: 600;
+}
+.game__cta {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+.game__cta b { border: none; background: none; padding: 0; }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 620px) {
+  .card__head { gap: 12px; }
+  .card__num { width: 32px; height: 32px; font-size: 12px; }
+  .input-wrap { flex-wrap: wrap; padding: 8px; gap: 8px; }
+  .input-wrap input { flex: 1 1 100%; padding: 8px 6px; }
+  .input-wrap__icon, .input-wrap__prompt { display: none; }
+  .ghost-btn, .btn--send { width: 100%; justify-content: center; }
+  .results__head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .status-line { text-align: left; }
+}
+
+/* ============================================================
+   Motion preferences — anime.js also checks this at runtime
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
   }
 }
